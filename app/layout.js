@@ -9,6 +9,7 @@ const roboto = Roboto({
 });
 
 import { ToastContainer } from "react-toastify";
+import NextAuthProvider from "@/components/providers/NextAuthProvider";
 
 export const metadata = {
 	title: "Trello",
@@ -19,7 +20,7 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<body className={roboto.className}>
-				{children}
+				<NextAuthProvider>{children}</NextAuthProvider>
 				<ToastContainer />
 			</body>
 		</html>

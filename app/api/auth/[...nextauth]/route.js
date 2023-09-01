@@ -4,7 +4,7 @@ import { verifyPassword } from "@/lib/utils";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions = {
 	session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
 	providers: [
 		CredentialsProvider({
@@ -19,7 +19,7 @@ const handler = NextAuth({
 
 				const user = await User.findOne({ username });
 				if (!user) throw new Error("user not found");
-                
+
 				const passwordVerify = await verifyPassword(password, user.password);
 				if (!passwordVerify) throw new Error("username or password incorrect");
 
@@ -31,6 +31,8 @@ const handler = NextAuth({
 		signIn: "/sign-in",
 		error: "/sign-in",
 	},
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
