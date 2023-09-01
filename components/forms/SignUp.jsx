@@ -1,22 +1,76 @@
 "use client";
 import Input from "@/components/Input";
+import { signUp } from "@/lib/actions/user.actions";
+import { useFormik } from "formik";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+
+import * as YUP from "yup";
 
 export default function SignUpForm() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
+	const router = useRouter();
+
+	const formik = useFormik({
+		initialValues: {
+			username: "",
+			password: "",
+			confirmPassword: "",
+		},
+		validationSchema: YUP.object({
+			username: YUP.string()
+				.min(4, "username at least 4 charachter")
+				.required("required"),
+			password: YUP.string()
+				.required("required")
+				.min(6, "password at least 6 charachter"),
+			confirmPassword: YUP.string()
+				.oneOf([YUP.ref("password"), null], "Passwords must match")
+				.required("required"),
+		}),
+		onSubmit: async (values, { resetForm }) => {
+			try {
+				await signUp({
+					username: values.username,
+					password: values.password,
+					confirmPassword: values.confirmPassword,
+				});
+
+				toast.success(
+					`Congratulations ${values.username} - your account was created successfully`,
+				);
+				resetForm();
+				router.replace("/sign-in");
+			} catch (error) {
+				toast.error(`${error.message.slice(0, 20)} ...`);
+			}
+		},
+	});
+
 	return (
-		<form className="flex flex-col gap-2 w-full md:max-w-md md:mx-auto">
-			<Input label="username" value={username} setter={setUsername} />
-			<Input label="password" value={password} setter={setPassword} />
+		<form
+			onSubmit={formik.handleSubmit}
+			className="flex flex-col gap-2 w-full md:max-w-md md:mx-auto"
+		>
 			<Input
-				label="confirm password"
-				value={confirmPassword}
-				setter={setConfirmPassword}
+				label="username"
+				value={formik.values.username}
+				options={formik.getFieldProps("username")}
+				formik={formik}
 			/>
-			<button type="button" className="default__button">
+			<Input
+				label="password"
+				value={formik.values.password}
+				options={formik.getFieldProps("password")}
+				formik={formik}
+			/>
+			<Input
+				label="confirmPassword"
+				value={formik.values.confirmPassword}
+				options={formik.getFieldProps("confirmPassword")}
+				formik={formik}
+			/>
+			<button type="submit" className="default__button">
 				Create Account
 			</button>
 
