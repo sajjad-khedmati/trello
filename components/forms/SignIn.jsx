@@ -1,18 +1,66 @@
 "use client";
 import Input from "@/components/Input";
+import { useFormik } from "formik";
+
+import { signIn } from "next-auth/react";
+
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { FiGithub } from "react-icons/fi";
+import { GrFormClose } from "react-icons/gr";
+import { toast } from "react-toastify";
 
-export default function SignInForm() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
+import * as YUP from "yup";
+
+export default function SignInForm({ params }) {
+	const formik = useFormik({
+		initialValues: {
+			username: "",
+			password: "",
+		},
+		validationSchema: YUP.object({
+			username: YUP.string()
+				.min(4, "username at least 4 charachter")
+				.required("required"),
+			password: YUP.string()
+				.required("required")
+				.min(6, "password at least 6 charachter"),
+		}),
+		onSubmit: async (values) => {
+			const response = await signIn("credentials", {
+				...values,
+				redirect: false,
+			});
+
+			if (!response.error) {
+				router.replace("/");
+			} else {
+				toast.error(response.error);
+			}
+		},
+	});
+
+	const router = useRouter();
+
 	return (
-		<form className="flex flex-col gap-2 w-full md:max-w-md md:mx-auto">
-			<Input label="username" value={username} setter={setUsername} />
-			<Input label="password" value={password} setter={setPassword} />
-			<button type="button" className="default__button">
+		<form
+			onSubmit={formik.handleSubmit}
+			className="flex flex-col gap-2 w-full md:max-w-md md:mx-auto"
+		>
+			<Input
+				label="username"
+				value={formik.values.username}
+				options={formik.getFieldProps("username")}
+				formik={formik}
+			/>
+			<Input
+				label="password"
+				value={formik.values.password}
+				options={formik.getFieldProps("password")}
+				formik={formik}
+			/>
+			<button type="submit" className="default__button">
 				Login to Account
 			</button>
 
