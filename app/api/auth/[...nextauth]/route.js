@@ -1,6 +1,8 @@
 import { User } from "@/lib/models/user.model";
+import clientPromise from "@/lib/mongodbClient";
 import { connectToDB } from "@/lib/mongoose";
 import { verifyPassword } from "@/lib/utils";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
@@ -37,6 +39,7 @@ export const authOptions = {
 		signIn: "/sign-in",
 		error: "/sign-in",
 	},
+	adapter: MongoDBAdapter(clientPromise),
 	callbacks: {
 		async session({ session, token }) {
 			session.user = token.user;
