@@ -3,6 +3,7 @@ import { connectToDB } from "@/lib/mongoose";
 import { verifyPassword } from "@/lib/utils";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
 
 export const authOptions = {
 	session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
@@ -25,6 +26,10 @@ export const authOptions = {
 
 				return user;
 			},
+		}),
+		GithubProvider({
+			clientId: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
 		}),
 	],
 	pages: {

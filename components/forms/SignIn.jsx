@@ -5,10 +5,9 @@ import { useFormik } from "formik";
 import { signIn } from "next-auth/react";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { FiGithub } from "react-icons/fi";
-import { GrFormClose } from "react-icons/gr";
 import { toast } from "react-toastify";
 
 import * as YUP from "yup";
@@ -81,6 +80,7 @@ export default function SignInForm({ params }) {
 			</div>
 
 			<button
+				onClick={() => signIn("github")}
 				type="button"
 				className="flex items-center justify-center gap-2 py-2 border rounded-lg
     hover:bg-gray-800 hover:text-white transition"
