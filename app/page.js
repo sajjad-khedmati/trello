@@ -8,7 +8,7 @@ export default async function Home() {
 		redirect("/sign-in");
 	}
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-center text-6xl font-bold">
+		<main className="flex flex-col items-center justify-center text-6xl font-bold mt-12">
 			Trello Application
 		</main>
 	);
